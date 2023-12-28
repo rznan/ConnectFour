@@ -14,5 +14,10 @@ namespace Connect4.Models
         public string Name { get => name; }
         public char Symbol { get => symbol; }
         public string Color { get => color; }
+
+        internal Player Clone()
+        {
+            return new Player(Name, Symbol, Color);
+        }
     }
 }

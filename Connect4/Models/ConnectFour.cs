@@ -10,8 +10,10 @@ namespace Connect4.Models
         private Cell[,] board;
         private Player[] players;
         private Player currentPlayer;
+        public Player CurrentPlayer { get => currentPlayer.Clone(); }
         private Player ?winner = null;
         public Player? Winner { get => winner; }
+
         private static readonly Dictionary<char, int> lettersValues = new()
         {
             {'A', 0},
@@ -124,10 +126,12 @@ namespace Connect4.Models
         {
             if(ValidateMove(move))
             {
-                int line = int.Parse(move[1].ToString()) -1;
-                int column = lettersValues[move[0]];
+                int column = int.Parse(move[1].ToString()) -1;
+                int line = lettersValues[move[0]];
 
-                board[line, column] = new Cell(currentPlayer.Symbol, currentPlayer.Color);
+                board[line, column] = new Cell(CurrentPlayer.Symbol, CurrentPlayer.Color);
+
+                SwichtPlayer();
 
                 return true;
             }
@@ -135,7 +139,7 @@ namespace Connect4.Models
             return false;
         }
 
-        public bool ValidateMove(string move)
+        private bool ValidateMove(string move)
         {
             if(move.Length == 2)
             {
@@ -149,11 +153,11 @@ namespace Connect4.Models
                     return false;
                 }
 
-                line = int.Parse(move[1].ToString()) -1;
-                if(!(line < 7 && line >= 0)) 
-                    return false;
+                line = lettersValues[move[0]];
 
-                column = lettersValues[move[0]];
+                column = int.Parse(move[1].ToString()) -1;
+                if(!(column < 7 && line >= 0)) 
+                    return false;
 
                 // checks if the square is empty
                 if(board[line, column].Content == ' ')
@@ -168,11 +172,16 @@ namespace Connect4.Models
 
         public bool CheckWin()
         {
+            bool isDraw = true;
+
             for (int line = 0; line < board.GetLength(0); line++)
             {
                 for (int col = 0; col < board.GetLength(1); col++)
                 {
                     char currentSymbol = board[line, col].Content;
+
+                    if(currentSymbol == ' ' && isDraw)
+                        isDraw = false;
 
                     if (currentSymbol == ' ')
                         continue;
@@ -188,7 +197,7 @@ namespace Connect4.Models
                 }
             }
 
-            return false;
+            return isDraw;
         }
 
         private bool CheckSequence(int startLine, int startCol, int lineDelta, int colDelta, int currentSymbol)
