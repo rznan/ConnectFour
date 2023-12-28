@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Connect4.Models
 {
-    public class Player(string name, char symbol, string color)
+    public class Player(string name="No Name", char symbol=' ', string color="white")
     {
         private string name = name;
         private char symbol = symbol;
